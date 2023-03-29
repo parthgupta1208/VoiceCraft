@@ -7,6 +7,17 @@ import speech_recognition as sr
 import threading
 import ctypes
 from matplotlib.animation import FuncAnimation
+import pyttsx3
+
+#define engine for speech
+engine = pyttsx3.init('sapi5')
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[1].id)
+
+#function for speech
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
 
 # Parameters
 CHUNKSIZE = 1024 # number of audio samples per frame
@@ -26,7 +37,7 @@ stream = p.open(format=pyaudio.paInt16,
 # Initialize plot
 fig, ax = plt.subplots(facecolor='black', figsize=(3,1), dpi=100)
 plt.axis('off')
-line, = ax.plot(np.random.rand(CHUNKSIZE), color='red', linewidth=2)
+line, = ax.plot(np.random.rand(CHUNKSIZE), color='red', linewidth=1)
 ax.set_ylim(-1, 1)
 
 # Function to update plot
@@ -44,6 +55,10 @@ def update_plot(frame):
 # Create animation
 ani = FuncAnimation(fig, update_plot, blit=True, interval=UPDATE_INTERVAL)
 
+# Function to check text for keywords
+def check_text(text):
+    pass
+
 # Define a function to recognize speech
 def recognize_speech():
     r = sr.Recognizer()
@@ -54,6 +69,7 @@ def recognize_speech():
             print("Processing...")
         try:
             text = r.recognize_google(audio)
+            threading.Thread(target=check_text, args=(text,)).start()
             print("You said: " + text)
         except sr.UnknownValueError:
             print("Sorry, could not understand audio")
