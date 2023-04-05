@@ -8,6 +8,13 @@ import threading
 import ctypes
 from matplotlib.animation import FuncAnimation
 import pyttsx3
+import pyautogui
+from deepmultilingualpunctuation import PunctuationModel
+
+# Initializing the Punctuator Engine
+model = PunctuationModel()
+
+state="start"
 
 #define engine for speech
 engine = pyttsx3.init('sapi5')
@@ -57,7 +64,13 @@ ani = FuncAnimation(fig, update_plot, blit=True, interval=UPDATE_INTERVAL)
 
 # Function to check text for keywords
 def check_text(text):
-    pass
+    global state
+    if state=="type":
+        punctuated_text = model.restore_punctuation(text)
+        pyautogui.typewrite(punctuated_text,0.1)
+    else:
+        if 'mode type' in text:
+            state="type"
 
 # Define a function to recognize speech
 def recognize_speech():
@@ -67,6 +80,7 @@ def recognize_speech():
             print("Speak now...")
             audio = r.listen(source)
             print("Processing...")
+            text=""
         try:
             text = r.recognize_google(audio)
             threading.Thread(target=check_text, args=(text,)).start()
@@ -86,6 +100,7 @@ root.overrideredirect(True)
 root.geometry("300x100+{}+{}".format(ctypes.windll.user32.GetSystemMetrics(0) - 320, 20))
 root.resizable(False, False)
 root.attributes("-alpha", 0.6)
+root.attributes("-topmost", True)
 
 # Create canvas for plot
 canvas = tk.Canvas(root, width=300, height=100, highlightthickness=0)

@@ -8,6 +8,13 @@ import threading
 import ctypes
 from matplotlib.animation import FuncAnimation
 import pyttsx3
+from deepmultilingualpunctuation import PunctuationModel
+import pyautogui
+
+state="start"
+
+# Initializing the Punctuator Engine
+model = PunctuationModel()
 
 #define engine for speech
 engine = pyttsx3.init('sapi5')
@@ -57,24 +64,49 @@ ani = FuncAnimation(fig, update_plot, blit=True, interval=UPDATE_INTERVAL)
 
 # Function to check text for keywords
 def check_text(text):
-    pass
+    global state
+    if 'activate type' in text:
+        state="type"
+        speak("mode set to typing")
+    if 'mode mouse' in text:
+        pass
+    
+# function to type
+def type_text(text):
+    global state
+    if "end typing code confirm" in text:
+        text=text.replace("end typing code confirm","")
+        state="start"
+        speak("you have stopped typing")
+    if text=="":
+        pass
+    else:
+        punctuated_text = model.restore_punctuation(text)
+        pyautogui.typewrite(punctuated_text,0.1)
 
 # Define a function to recognize speech
 def recognize_speech():
+    global state
     r = sr.Recognizer()
     while True:
         with sr.Microphone() as source:
             print("Speak now...")
             audio = r.listen(source)
             print("Processing...")
+            text=""
         try:
             text = r.recognize_google(audio)
-            threading.Thread(target=check_text, args=(text,)).start()
-            print("You said: " + text)
         except sr.UnknownValueError:
             print("Sorry, could not understand audio")
         except sr.RequestError as e:
             print("Could not request results from Google Speech Recognition service; {0}".format(e))
+        finally:
+            if state=="type":
+                threading.Thread(target=type_text, args=(text,)).start()
+                print("You said: " + text)
+            else:
+                threading.Thread(target=check_text, args=(text,)).start()
+                print("You said: " + text)
 
 # Start a new thread for speech recognition
 speech_thread = threading.Thread(target=recognize_speech)
@@ -86,6 +118,7 @@ root.overrideredirect(True)
 root.geometry("300x100+{}+{}".format(ctypes.windll.user32.GetSystemMetrics(0) - 320, 20))
 root.resizable(False, False)
 root.attributes("-alpha", 0.6)
+root.attributes("-topmost", True)
 
 # Create canvas for plot
 canvas = tk.Canvas(root, width=300, height=100, highlightthickness=0)
