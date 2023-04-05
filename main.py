@@ -8,6 +8,7 @@ import threading
 import ctypes
 from matplotlib.animation import FuncAnimation
 import pyttsx3
+import subprocess
 
 #define engine for speech
 engine = pyttsx3.init('sapi5')
@@ -57,7 +58,10 @@ ani = FuncAnimation(fig, update_plot, blit=True, interval=UPDATE_INTERVAL)
 
 # Function to check text for keywords
 def check_text(text):
-    pass
+    if 'mode type' in text:
+        cmd = ["python", "WordWizard.py"]
+        process = subprocess.Popen(cmd)
+        process.wait()
 
 # Define a function to recognize speech
 def recognize_speech():
