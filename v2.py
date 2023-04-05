@@ -10,6 +10,7 @@ from matplotlib.animation import FuncAnimation
 import pyttsx3
 from deepmultilingualpunctuation import PunctuationModel
 import pyautogui
+import time
 
 state="start"
 
@@ -68,6 +69,19 @@ def check_text(text):
     if 'activate type' in text:
         state="type"
         speak("mode set to typing")
+    if 'open' in text or 'run' in text or 'launch' in text:
+        text=text.replace("open ","")
+        text=text.replace("run ","")
+        text=text.replace("launch ","")
+        text=text.lower()
+        if text=="":
+            pass
+        else:
+            speak("opening "+text)
+            pyautogui.press('win')
+            pyautogui.write(text)
+            time.sleep(1)
+            pyautogui.press('enter')
     if 'mode mouse' in text:
         pass
     
