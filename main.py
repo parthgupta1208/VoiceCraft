@@ -8,7 +8,13 @@ import threading
 import ctypes
 from matplotlib.animation import FuncAnimation
 import pyttsx3
-import subprocess
+from deepmultilingualpunctuation import PunctuationModel
+import pyautogui
+
+state="start"
+
+# Initializing the Punctuator Engine
+model = PunctuationModel()
 
 #define engine for speech
 engine = pyttsx3.init('sapi5')
@@ -58,13 +64,24 @@ ani = FuncAnimation(fig, update_plot, blit=True, interval=UPDATE_INTERVAL)
 
 # Function to check text for keywords
 def check_text(text):
+    global state
     if 'mode type' in text:
-        cmd = ["python", "WordWizard.py"]
-        process = subprocess.Popen(cmd)
-        process.wait()
+        state="type"
+        speak("mode set to typing")
+    
+# function to type
+def type_text(text):
+    global state
+    if "end typing code confirm" in text:
+        text=text.replace("end typing code confirm","")
+        state="start"
+        speak("you have stopped typing")
+    punctuated_text = model.restore_punctuation(text)
+    pyautogui.typewrite(punctuated_text,0.1)
 
 # Define a function to recognize speech
 def recognize_speech():
+    global state
     r = sr.Recognizer()
     while True:
         with sr.Microphone() as source:
@@ -73,12 +90,17 @@ def recognize_speech():
             print("Processing...")
         try:
             text = r.recognize_google(audio)
-            threading.Thread(target=check_text, args=(text,)).start()
-            print("You said: " + text)
         except sr.UnknownValueError:
             print("Sorry, could not understand audio")
         except sr.RequestError as e:
             print("Could not request results from Google Speech Recognition service; {0}".format(e))
+        finally:
+            if state=="start":
+                threading.Thread(target=check_text, args=(text,)).start()
+                print("You said: " + text)
+            elif state=="type":
+                threading.Thread(target=type_text, args=(text,)).start()
+                print("You said: " + text)
 
 # Start a new thread for speech recognition
 speech_thread = threading.Thread(target=recognize_speech)
