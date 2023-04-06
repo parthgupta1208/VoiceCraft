@@ -69,6 +69,9 @@ def check_text(text):
     if 'activate type' in text:
         state="type"
         speak("mode set to typing")
+    if 'activate voice mouse' in text:
+        state="voicemouse"
+        speak("mode set to voice mouse")
     if 'open' in text or 'run' in text or 'launch' in text:
         text=text.replace("open ","")
         text=text.replace("run ","")
@@ -82,9 +85,32 @@ def check_text(text):
             pyautogui.write(text)
             time.sleep(1)
             pyautogui.press('enter')
-    if 'mode mouse' in text:
+    if 'activate mouse' in text:
         pass
-    
+
+#function for voice mouse
+def voice_mouse(text):
+    global state
+    if "end voice mouse confirm" in text:
+        state="start"
+        speak("you have stopped voice mouse")
+    if "left click" in text:
+        pyautogui.click()
+    if "right click" in text:
+        pyautogui.click(button='right')
+    if "scroll up" in text:
+        pyautogui.scroll(100)
+    if "scroll down" in text:
+        pyautogui.scroll(-100)
+    if "up" in text:
+        pyautogui.moveRel(0, -100, duration=0.2)
+    if "down" in text:
+        pyautogui.moveRel(0, 100, duration=0.2)
+    if "left" in text:
+        pyautogui.moveRel(-100, 0, duration=0.2)
+    if "right" in text:
+        pyautogui.moveRel(100, 0, duration=0.2)
+
 # function to type
 def type_text(text):
     global state
@@ -110,6 +136,7 @@ def recognize_speech():
             text=""
         try:
             text = r.recognize_google(audio)
+            text=text.lower()
         except sr.UnknownValueError:
             print("Sorry, could not understand audio")
         except sr.RequestError as e:
@@ -117,6 +144,9 @@ def recognize_speech():
         finally:
             if state=="type":
                 threading.Thread(target=type_text, args=(text,)).start()
+                print("You said: " + text)
+            elif state=="voicemouse":
+                threading.Thread(target=voice_mouse, args=(text,)).start()
                 print("You said: " + text)
             else:
                 threading.Thread(target=check_text, args=(text,)).start()
