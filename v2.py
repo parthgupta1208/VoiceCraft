@@ -18,7 +18,7 @@ import os
 state="start"
 
 # setting openaiapi
-openai.api_key = os.environ["OPENAI_KEY"]
+openai.api_key = "yahan pe errors"
 
 # Initializing the Punctuator Engine
 # model = PunctuationModel()
