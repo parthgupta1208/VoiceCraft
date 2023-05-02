@@ -11,11 +11,18 @@ import pyttsx3
 from deepmultilingualpunctuation import PunctuationModel
 import pyautogui
 import time
+import openai
+import os
 
+# setting initial state
 state="start"
 
+# setting openaiapi
+openai.api_key = os.environ["OPENAI_KEY"]
+
 # Initializing the Punctuator Engine
-model = PunctuationModel()
+# model = PunctuationModel()
+model="hee"
 
 #define engine for speech
 engine = pyttsx3.init('sapi5')
@@ -87,6 +94,112 @@ def check_text(text):
             pyautogui.press('enter')
     if 'activate mouse' in text:
         pass
+    if 'activate code' in text:
+        state="code"
+        speak("mode set to coding")
+
+#function to code
+def codify(text):
+    global state
+    if "end coding" in text:
+        state="start"
+        speak("you have stopped coding")
+    else:
+        if 'python' in text:
+            completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", 
+            messages = [{"role": "system", "content" : "Answer as concisely as possible. I will be giving you a prompt on what will a code do. Give me the code for it but don't explain how the code works. The code should come as a single output, i.e don't output the code in various parts. If creating functions, always include code for main as well"},
+            {"role": "user", "content" : text}]
+            )
+            print(completion['choices'][0]['message']['content'])
+            output=completion['choices'][0]['message']['content']
+            output=output.replace("```python","```")
+            output=(output.split("```"))[1].split("```")[0]
+            with open("Codes\\codefile.py", "w") as f:
+                f.write(output)
+            os.system("code Codes\\codefile.py")
+            os.system("python Codes\\codefile.py")
+            speak("the code is opened in vscode and running")
+        elif 'html' in text:
+            completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", 
+            messages = [{"role": "system", "content" : "Answer as concisely as possible. I will be giving you a prompt on how a webpage should look like and what will its function be. Give me the code for it but don't explain how the code works. The code should contain css and javscript code so the page is responsive. Ise the <script> and <style> tags instead of creating separate files"},
+            {"role": "user", "content" : text}]
+            )
+            print(completion['choices'][0]['message']['content'])
+            html=completion['choices'][0]['message']['content']
+            html=html.replace("```html","```")
+            html=(html.split("```"))[1].split("```")[0]
+            ehtml=html[:html.find("</body>")]+"<center><a href='/copycode'>Copy Code</a></center>"+html[html.find("</body>"):]
+            speak("the page is opened in vscode and running")
+        elif 'java' in text:
+            completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", 
+            messages = [{"role": "system", "content" : "Answer as concisely as possible. I will be giving you a prompt on what will a code do. Give me the code for it but don't explain how the code works. The code should come as a single output, i.e don't output the code in various parts. If creating functions, always include code for main as well"},
+            {"role": "user", "content" : text}]
+            )
+            print(completion['choices'][0]['message']['content'])
+            output=completion['choices'][0]['message']['content']
+            output=output.replace("```cpp","```")
+            output=(output.split("```"))[1].split("```")[0]
+            with open("Codes\\codefile.java", "w") as f:
+                f.write(output)
+            os.system("code Codes\\codefile.java")
+            os.system("javac Codes\\codefile.java")
+            os.system("java -classpath Codes\\codefile.class")
+            speak("the code is opened in vscode and running")
+        elif 'c++' in text:
+            completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", 
+            messages = [{"role": "system", "content" : "Answer as concisely as possible. I will be giving you a prompt on what will a code do. Give me the code for it but don't explain how the code works. The code should come as a single output, i.e don't output the code in various parts. If creating functions, always include code for main as well"},
+            {"role": "user", "content" : text}]
+            )
+            print(completion['choices'][0]['message']['content'])
+            output=completion['choices'][0]['message']['content']
+            output=output.replace("```cpp","```")
+            output=(output.split("```"))[1].split("```")[0]
+            with open("Codes\\codefile.cpp", "w") as f:
+                f.write(output)
+            os.system("code Codes\\codefile.cpp")
+            os.system("g++ Codes\\codefile.cpp -o codefile.exe")
+            os.system("codefile.exe")
+            speak("the code is opened in vscode and running")
+        elif 'c#' in text:
+            completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", 
+            messages = [{"role": "system", "content" : "Answer as concisely as possible. I will be giving you a prompt on what will a code do. Give me the code for it but don't explain how the code works. The code should come as a single output, i.e don't output the code in various parts. If creating functions, always include code for main as well"},
+            {"role": "user", "content" : text}]
+            )
+            print(completion['choices'][0]['message']['content'])
+            output=completion['choices'][0]['message']['content']
+            output=output.replace("```cs","```")
+            output=(output.split("```"))[1].split("```")[0]
+            with open("Codes\\codefile.cs", "w") as f:
+                f.write(output)
+            os.system("code Codes\\codefile.cs")
+            os.system("csc Codes\\codefile.cs")
+            os.system("Codes\\codefile.exe")
+            speak("the code is opened in vscode and running")
+        elif ' c ' in text:
+            completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", 
+            messages = [{"role": "system", "content" : "Answer as concisely as possible. I will be giving you a prompt on what will a code do. Give me the code for it but don't explain how the code works. The code should come as a single output, i.e don't output the code in various parts. If creating functions, always include code for main as well"},
+            {"role": "user", "content" : text}]
+            )
+            print(completion['choices'][0]['message']['content'])
+            output=completion['choices'][0]['message']['content']
+            output=output.replace("```c","```")
+            output=(output.split("```"))[1].split("```")[0]
+            with open("Codes\\codefile.c", "w") as f:
+                f.write(output)
+            os.system("code Codes\\codefile.c")
+            os.system("gcc Codes\\codefile.c -o codefile.exe")
+            os.system("codefile.exe")
+            speak("the code is opened in vscode and running")
+        else:
+            speak("i'm sorry, i couldn't understand what you meant. please specify the language you want the code in.")
+        speak("coding mode ended")
+        state="start"
 
 #function for voice mouse
 def voice_mouse(text):
@@ -147,6 +260,9 @@ def recognize_speech():
                 print("You said: " + text)
             elif state=="voicemouse":
                 threading.Thread(target=voice_mouse, args=(text,)).start()
+                print("You said: " + text)
+            elif state=="code":
+                threading.Thread(target=codify, args=(text,)).start()
                 print("You said: " + text)
             else:
                 threading.Thread(target=check_text, args=(text,)).start()
