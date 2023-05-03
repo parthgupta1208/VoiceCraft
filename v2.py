@@ -18,11 +18,10 @@ import os
 state="start"
 
 # setting openaiapi
-openai.api_key = "yahan pe errors"
+openai.api_key = os.environ['OPENAI_KEY']
 
 # Initializing the Punctuator Engine
-# model = PunctuationModel()
-model="hee"
+model = PunctuationModel()
 
 #define engine for speech
 engine = pyttsx3.init('sapi5')
