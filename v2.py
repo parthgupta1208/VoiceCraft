@@ -22,7 +22,8 @@ state="start"
 openai.api_key = os.getenv("OPENAI_KEY")
 
 # Initializing the Punctuator Engine
-model = PunctuationModel()
+# model = PunctuationModel()
+model="test mode"
 
 #define engine for speech
 engine = pyttsx3.init('sapi5')
@@ -120,6 +121,8 @@ def codify(text):
             os.system("code Codes\\codefile.py")
             os.system("python Codes\\codefile.py")
             speak("the code is opened in vscode and running")
+            speak("coding mode ended")
+            state="start"
         elif 'html' in text:
             completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", 
@@ -198,31 +201,39 @@ def codify(text):
             speak("the code is opened in vscode and running")
         else:
             speak("i'm sorry, i couldn't understand what you meant. please specify the language you want the code in.")
-        speak("coding mode ended")
-        state="start"
 
 #function for voice mouse
 def voice_mouse(text):
     global state
-    if "end voice mouse confirm" in text:
+    if "mode reset" in text:
         state="start"
         speak("you have stopped voice mouse")
     if "left click" in text:
-        pyautogui.click()
+        count=text.count("left click")
+        for i in range(count):
+            pyautogui.click()
     if "right click" in text:
-        pyautogui.click(button='right')
+        count=text.count("right click")
+        for i in range(count):
+            pyautogui.click(button='right')
     if "scroll up" in text:
-        pyautogui.scroll(100)
+        count=text.count("scroll up")
+        pyautogui.scroll(count*100)
     if "scroll down" in text:
-        pyautogui.scroll(-100)
+        count=text.count("scroll down")
+        pyautogui.scroll(count*-100)
     if "up" in text:
-        pyautogui.moveRel(0, -100, duration=0.2)
+        count=text.count("up")
+        pyautogui.moveRel(0, count*-100, duration=0.2)
     if "down" in text:
-        pyautogui.moveRel(0, 100, duration=0.2)
+        count=text.count("down")
+        pyautogui.moveRel(0, count*100, duration=0.2)
     if "left" in text:
-        pyautogui.moveRel(-100, 0, duration=0.2)
+        count=text.count("left")
+        pyautogui.moveRel(count*-100, 0, duration=0.2)
     if "right" in text:
-        pyautogui.moveRel(100, 0, duration=0.2)
+        count=text.count("right")
+        pyautogui.moveRel(count*100, 0, duration=0.2)
 
 # function to type
 def type_text(text):
