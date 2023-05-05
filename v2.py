@@ -19,7 +19,7 @@ state="start"
 
 # setting openaiapi
 # openai.api_key = os.environ['OPENAI_KEY']
-openai.api_key = "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"
+openai.api_key = os.getenv("OPENAI_KEY")
 
 # Initializing the Punctuator Engine
 # model = PunctuationModel()
@@ -29,6 +29,7 @@ model="test mode"
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
+
 
 # function for code execution in a new thread
 def code_exec(prog_lang,*args):
@@ -127,6 +128,9 @@ def check_text(text):
     if 'activate code' in text:
         state="code"
         speak("mode set to coding")
+    if 'friday terminate' in text:
+        speak("terminating. adios")
+        os.abort()
 
 #function to code
 def codify(text):
@@ -148,7 +152,7 @@ def codify(text):
             output=(output.split("```"))[1].split("```")[0]
             with open("Codes\\codefile.py", "w") as f:
                 f.write(output)
-            threading.Thread(target=code_exec, args=('python')).start()
+            threading.Thread(target=code_exec, args=(['python'])).start()
             speak("the code is opened in vscode and running. coding mode ended")
         elif 'html' in text:
             state="start"
@@ -163,7 +167,7 @@ def codify(text):
             html=(html.split("```"))[1].split("```")[0]
             with open("Codes\\codefile.html", "w") as f:
                 f.write(output)
-            threading.Thread(target=code_exec, args=('html')).start()
+            threading.Thread(target=code_exec, args=(['html'])).start()
             speak("the code is opened in vscode and running. coding mode ended")
         elif 'java' in text:
             state="start"
@@ -178,7 +182,7 @@ def codify(text):
             output=(output.split("```"))[1].split("```")[0]
             with open("Codes\\codefile.java", "w") as f:
                 f.write(output)
-            threading.Thread(target=code_exec, args=('java')).start()
+            threading.Thread(target=code_exec, args=(['java'])).start()
             speak("the code is opened in vscode and running. coding mode ended")
         elif 'c plus plus' in text:
             state="start"
@@ -193,7 +197,7 @@ def codify(text):
             output=(output.split("```"))[1].split("```")[0]
             with open("Codes\\codefile.cpp", "w") as f:
                 f.write(output)
-            threading.Thread(target=code_exec, args=('c++')).start()
+            threading.Thread(target=code_exec, args=(['c++'])).start()
             speak("the code is opened in vscode and running. coding mode ended")
         elif 'c sharp' in text:
             state="start"
@@ -208,7 +212,7 @@ def codify(text):
             output=(output.split("```"))[1].split("```")[0]
             with open("Codes\\codefile.cs", "w") as f:
                 f.write(output)
-            threading.Thread(target=code_exec, args=('cs')).start()
+            threading.Thread(target=code_exec, args=(['cs'])).start()
             speak("the code is opened in vscode and running. coding mode ended")
         elif ' c ' in text:
             state="start"
@@ -223,7 +227,7 @@ def codify(text):
             output=(output.split("```"))[1].split("```")[0]
             with open("Codes\\codefile.c", "w") as f:
                 f.write(output)
-            threading.Thread(target=code_exec, args=('c')).start()
+            threading.Thread(target=code_exec, args=(['c'])).start()
             speak("the code is opened in vscode and running. coding mode ended")
         else:
             speak("i'm sorry, i couldn't understand what you meant. please specify the language you want the code in.")
