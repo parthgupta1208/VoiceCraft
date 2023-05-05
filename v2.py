@@ -19,7 +19,7 @@ state="start"
 
 # setting openaiapi
 # openai.api_key = os.environ['OPENAI_KEY']
-openai.api_key = os.getenv("OPENAI_KEY")
+openai.api_key = "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"
 
 # Initializing the Punctuator Engine
 # model = PunctuationModel()
@@ -30,10 +30,39 @@ engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
 
+# function for code execution in a new thread
+def code_exec(prog_lang,*args):
+    if prog_lang=='python':
+        os.system("code Codes\\codefile.py")
+        os.system("python Codes\\codefile.py")
+    if prog_lang=='html':
+        os.system("code Codes\\codefile.html")
+        os.system("start Codes\\codefile.html")
+    if prog_lang=='java':
+        os.system("code Codes\\codefile.java")
+        os.system("javac Codes\\codefile.java")
+        os.system("java -classpath Codes\\codefile.class")
+    if prog_lang=='c++':
+        os.system("code Codes\\codefile.cpp")
+        os.system("g++ Codes\\codefile.cpp -o codefile.exe")
+        os.system("codefile.exe")
+    if prog_lang=='cs':
+        os.system("code Codes\\codefile.cs")
+        os.system("csc Codes\\codefile.cs")
+        os.system("Codes\\codefile.exe")
+    if prog_lang=="c":
+        os.system("code Codes\\codefile.c")
+        os.system("gcc Codes\\codefile.c -o codefile.exe")
+        os.system("codefile.exe")
+
+
 #function for speech
 def speak(audio):
-    engine.say(audio)
-    engine.runAndWait()
+    try:
+        engine.say(audio)
+        engine.runAndWait()
+    except:
+        pass
 
 # Parameters
 CHUNKSIZE = 1024 # number of audio samples per frame
@@ -107,6 +136,7 @@ def codify(text):
         speak("you have stopped coding")
     else:
         if 'python' in text:
+            state="start"
             completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", 
             messages = [{"role": "system", "content" : "Answer as concisely as possible. I will be giving you a prompt on what will a code do. Give me the code for it but don't explain how the code works. The code should come as a single output, i.e don't output the code in various parts. If creating functions, always include code for main as well"},
@@ -118,12 +148,10 @@ def codify(text):
             output=(output.split("```"))[1].split("```")[0]
             with open("Codes\\codefile.py", "w") as f:
                 f.write(output)
-            os.system("code Codes\\codefile.py")
-            os.system("python Codes\\codefile.py")
-            speak("the code is opened in vscode and running")
-            speak("coding mode ended")
-            state="start"
+            threading.Thread(target=code_exec, args=('python')).start()
+            speak("the code is opened in vscode and running. coding mode ended")
         elif 'html' in text:
+            state="start"
             completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", 
             messages = [{"role": "system", "content" : "Answer as concisely as possible. I will be giving you a prompt on how a webpage should look like and what will its function be. Give me the code for it but don't explain how the code works. The code should contain css and javscript code so the page is responsive. Ise the <script> and <style> tags instead of creating separate files"},
@@ -133,9 +161,12 @@ def codify(text):
             html=completion['choices'][0]['message']['content']
             html=html.replace("```html","```")
             html=(html.split("```"))[1].split("```")[0]
-            ehtml=html[:html.find("</body>")]+"<center><a href='/copycode'>Copy Code</a></center>"+html[html.find("</body>"):]
-            speak("the page is opened in vscode and running")
+            with open("Codes\\codefile.html", "w") as f:
+                f.write(output)
+            threading.Thread(target=code_exec, args=('html')).start()
+            speak("the code is opened in vscode and running. coding mode ended")
         elif 'java' in text:
+            state="start"
             completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", 
             messages = [{"role": "system", "content" : "Answer as concisely as possible. I will be giving you a prompt on what will a code do. Give me the code for it but don't explain how the code works. The code should come as a single output, i.e don't output the code in various parts. If creating functions, always include code for main as well"},
@@ -147,11 +178,10 @@ def codify(text):
             output=(output.split("```"))[1].split("```")[0]
             with open("Codes\\codefile.java", "w") as f:
                 f.write(output)
-            os.system("code Codes\\codefile.java")
-            os.system("javac Codes\\codefile.java")
-            os.system("java -classpath Codes\\codefile.class")
-            speak("the code is opened in vscode and running")
+            threading.Thread(target=code_exec, args=('java')).start()
+            speak("the code is opened in vscode and running. coding mode ended")
         elif 'c plus plus' in text:
+            state="start"
             completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", 
             messages = [{"role": "system", "content" : "Answer as concisely as possible. I will be giving you a prompt on what will a code do. Give me the code for it but don't explain how the code works. The code should come as a single output, i.e don't output the code in various parts. If creating functions, always include code for main as well"},
@@ -163,11 +193,10 @@ def codify(text):
             output=(output.split("```"))[1].split("```")[0]
             with open("Codes\\codefile.cpp", "w") as f:
                 f.write(output)
-            os.system("code Codes\\codefile.cpp")
-            os.system("g++ Codes\\codefile.cpp -o codefile.exe")
-            os.system("codefile.exe")
-            speak("the code is opened in vscode and running")
-        elif 'c#' in text:
+            threading.Thread(target=code_exec, args=('c++')).start()
+            speak("the code is opened in vscode and running. coding mode ended")
+        elif 'c sharp' in text:
+            state="start"
             completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", 
             messages = [{"role": "system", "content" : "Answer as concisely as possible. I will be giving you a prompt on what will a code do. Give me the code for it but don't explain how the code works. The code should come as a single output, i.e don't output the code in various parts. If creating functions, always include code for main as well"},
@@ -179,11 +208,10 @@ def codify(text):
             output=(output.split("```"))[1].split("```")[0]
             with open("Codes\\codefile.cs", "w") as f:
                 f.write(output)
-            os.system("code Codes\\codefile.cs")
-            os.system("csc Codes\\codefile.cs")
-            os.system("Codes\\codefile.exe")
-            speak("the code is opened in vscode and running")
+            threading.Thread(target=code_exec, args=('cs')).start()
+            speak("the code is opened in vscode and running. coding mode ended")
         elif ' c ' in text:
+            state="start"
             completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", 
             messages = [{"role": "system", "content" : "Answer as concisely as possible. I will be giving you a prompt on what will a code do. Give me the code for it but don't explain how the code works. The code should come as a single output, i.e don't output the code in various parts. If creating functions, always include code for main as well"},
@@ -195,10 +223,8 @@ def codify(text):
             output=(output.split("```"))[1].split("```")[0]
             with open("Codes\\codefile.c", "w") as f:
                 f.write(output)
-            os.system("code Codes\\codefile.c")
-            os.system("gcc Codes\\codefile.c -o codefile.exe")
-            os.system("codefile.exe")
-            speak("the code is opened in vscode and running")
+            threading.Thread(target=code_exec, args=('c')).start()
+            speak("the code is opened in vscode and running. coding mode ended")
         else:
             speak("i'm sorry, i couldn't understand what you meant. please specify the language you want the code in.")
 
