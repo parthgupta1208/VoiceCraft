@@ -18,7 +18,8 @@ import os
 state="start"
 
 # setting openaiapi
-openai.api_key = os.environ['OPENAI_KEY']
+# openai.api_key = os.environ['OPENAI_KEY']
+openai.api_key = os.getenv("OPENAI_KEY")
 
 # Initializing the Punctuator Engine
 model = PunctuationModel()
@@ -147,7 +148,7 @@ def codify(text):
             os.system("javac Codes\\codefile.java")
             os.system("java -classpath Codes\\codefile.class")
             speak("the code is opened in vscode and running")
-        elif 'c++' in text:
+        elif 'c plus plus' in text:
             completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", 
             messages = [{"role": "system", "content" : "Answer as concisely as possible. I will be giving you a prompt on what will a code do. Give me the code for it but don't explain how the code works. The code should come as a single output, i.e don't output the code in various parts. If creating functions, always include code for main as well"},
