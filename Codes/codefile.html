@@ -2,35 +2,41 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My Webpage</title>
+    <meta charset="UTF-8">
     <style>
       body {
         background-color: black;
-        padding: 0;
-        margin: 0;
       }
-      
       button {
         background-color: red;
         color: white;
         padding: 10px 20px;
         border: none;
-        border-radius: 5px;
+        border-radius: 4px;
         font-size: 16px;
-        margin-top: 20px;
+        cursor: pointer;
       }
-      
-      img {
-        max-width: 100%;
-        height: auto;
+      button:hover {
+        opacity: 0.8;
+      }
+      input[type=file]{
+        display: none;
       }
     </style>
   </head>
   <body>
-    <button>Click Me</button>
-    <img src="https://source.unsplash.com/random" alt="Random Photo">
+    <button id="fileSelect">Select file</button>
+    <input type="file" id="fileInput">
     <script>
-      // JS code goes here
+      var fileSelect = document.getElementById("fileSelect");
+      var fileInput = document.getElementById("fileInput");
+
+      fileSelect.addEventListener("click", function(e){
+        if(fileInput){
+          fileInput.click();
+        }
+        e.preventDefault();
+      });
     </script>
   </body>
 </html>

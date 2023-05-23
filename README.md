@@ -66,3 +66,5 @@ Voice Craft is licensed under the MIT License. Please see the `LICENSE` file for
 ## Support
 
 For help with Voice Craft, please contact the developers or refer to the documentation provided with the application.
+
+![](https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=parthgupta1208&theme=monokai)

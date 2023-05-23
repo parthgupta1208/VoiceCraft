@@ -21,6 +21,8 @@ import wikipedia
 import webbrowser
 import requests
 
+pyautogui.FAILSAFE=False
+
 #vars for weather
 api_key = "5995f5e32100e6a622ffb2f0d088cb02"
 base_url = "http://api.openweathermap.org/data/2.5/weather?"
@@ -95,7 +97,7 @@ openai.api_key = os.getenv("OPENAI_KEY")
 
 # Initializing the Punctuator Engine
 # model = PunctuationModel()
-model="test mode"
+model ="test"
 
 #define engine for speech
 engine = pyttsx3.init('sapi5')
@@ -205,8 +207,6 @@ def check_text(text):
     if 'activate voice mouse' in text:
         state="voicemouse"
         speak("mode set to voice mouse")
-    if 'activate mouse' in text:
-        pass
     if 'activate code' in text:
         state="code"
         speak("mode set to coding")
@@ -216,9 +216,11 @@ def check_text(text):
 
     # friday gpt
     if "friday" in text and "chrome" in text:
+        speak("working on it")
         text=text.replace("friday","")
         threading.Thread(target=webperform, args=([text])).start()
     elif "friday" in text and "open" in text:
+        speak("working on it")
         text=text.replace("friday","")
         threading.Thread(target=perform, args=([text])).start()
     elif "friday" in text:
@@ -235,14 +237,6 @@ def check_text(text):
         if "screenshot" in text:
             threading.Thread(target=friday.screenshot, args=([])).start()
             speak("Screenshot Saved and Opened for Preview")
-        if "news" in text:
-            print("here")
-            news_list = client.get_news()
-            for item in news_list:
-                st = item['title'].split(' - ', 1)[0]
-                print(st)
-                speak(st)
-                print(st)
         if "weather" in text:
             query=text
             query=query.split("in")[1].strip()
@@ -267,12 +261,6 @@ def check_text(text):
                 speak("The Temperature in "+query+" is "+str(round(current_temperature-273.15))+"degree celsius and the weather can be described as "+str(weather_description))
             else:
                 speak("City Not Found")
-
-        if "download" in text:
-            text=text.replace("download","")
-            threading.Thread(target=friday.download, args=([text])).start()
-        if "music" in text:
-            threading.Thread(target=friday.music, args=([])).start()
         if "time" in text:
             strTime = datetime.datetime.now().strftime("%H hours and %M minutes")
             speak(strTime)
@@ -343,6 +331,7 @@ def codify(text):
         speak("you have stopped coding")
     else:
         if 'python' in text:
+            speak("working on it")
             state="start"
             completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", 
@@ -467,7 +456,7 @@ def voice_mouse(text):
     if "right" in text:
         count=text.count("right")
         pyautogui.moveRel(count*100, 0, duration=0.2)
-    if "grid" in text:
+    if "mouse map" in text:
         state="grid"
         gridwin=threading.Thread(target=tkinterwin.display_grid)
         gridwin.start()

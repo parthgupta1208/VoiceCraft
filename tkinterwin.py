@@ -4,6 +4,7 @@ def display_grid():
     global rootgrid
     rootgrid = tk.Tk()
     rootgrid.overrideredirect(True)
+    rootgrid.attributes('-topmost',1)
     rootgrid.geometry("{0}x{1}+0+0".format(rootgrid.winfo_screenwidth(), rootgrid.winfo_screenheight()))
     rootgrid.resizable(False, False)
     rootgrid.attributes("-alpha", 0.3)
